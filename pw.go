@@ -2,11 +2,12 @@ package pw
 
 import (
 	"fmt"
+	"regexp"
 	"unicode"
 )
 
 const (
-	Version = "Version: 0.9.5"
+	Version = "Version: 0.9.6"
 )
 
 type ParseWords struct {
@@ -16,6 +17,7 @@ type ParseWords struct {
 	db  bool   // Debuging Flat
 	qf  string // "C"		== '" with \
 	// "SQL"	== "" or ''				// xyzzy - TBD
+	// "none"	== ignore quotes - just split on blanks
 	keep_quote     bool // Keep ' and " in output
 	keep_backslash bool // Keep \\ in output
 }
@@ -55,7 +57,17 @@ From: http://blog.golang.org/strings
     }
 */
 
+var noneRe *regexp.Regexp
+
+func init() {
+	noneRe = regexp.MustCompile("[ \t\f]+")
+}
+
 func (this *ParseWords) GetWords() []string {
+	if this.qf == "none" {
+		return noneRe.Split(this.buf[this.pos:], -1)
+	}
+
 	i := this.pos
 	l := len(this.buf)
 	rv := make([]string, 0, 10)
