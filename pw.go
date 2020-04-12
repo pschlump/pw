@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	Version = "Version: 0.9.6"
+	Version = "Version: 1.0.0"
 )
 
 type ParseWords struct {
